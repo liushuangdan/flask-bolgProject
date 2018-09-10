@@ -1,0 +1,179 @@
+{% extends '/admin/admin.html' %}
+
+{% block sear %}
+<form class="navbar-search pull-left" action="{{ url_for('admin.tags_search') }}" method="get">
+    <input type="text" name="keywords" class="search-query span2" placeholder="Search" />
+</form>
+{% endblock %}
+
+{% block con %}
+
+<div class="span9">
+    <h1>
+        标签列表
+    </h1>
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>标签编号</th>
+                <th>标签名字</th>
+                <th>标签下博文数 </th>
+                <th>查看</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for v in ts.items %}
+            <tr>
+                <td>{{ v.id }}</td>
+                <td class="setname" tid='{{ v.id }}'>{{ v.name }}</td>
+                <td>{{ v.posts|length }}</td>
+                <td><a href="{{ url_for('home.tagsblogs',tid=v.id) }}" class="view-link">查看标签下的博文</a></td>
+                <td>
+                    <a href="" tid='{{ v.id }}' style="color:#333" class="del">删除</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bs-example-modal">添加标签</button>
+
+        <div class="modal fade bs-example-modal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+            <div class="modal-dialog modal" role="document">
+                <div class="modal-content">
+                    <form method="post" action="{{ url_for('admin.tagadd') }}" enctype="multipart/form-data">
+                        <input type="text" class="form-control" id="exampleInput" placeholder="标签名字" name="name">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </table> 
+    <div class="pagination">
+        <ul>
+            <li class="first">
+                <a href="#">首页</a>
+            </li>
+
+            <li class="pre">
+                <a href="#">«</a>
+            </li>
+
+            {% for v in ts.iter_pages() %}
+
+            <li {% if v == request.args.get('p',1)|int %} class="active" {% endif %}>
+                <a href="{% if v %} ?p={{ v }} {% else %} javascript:void(0) {% endif %}" class="current">{{ v|d('...',true) }}</a>
+            </li>
+            {% endfor %}
+            
+            <li class="next">
+                <a href="#">»</a>
+            </li>
+
+            <li class="fina">
+                <a href="#">尾页</a>
+            </li>
+        </ul>
+    </div>              
+   
+</div>              
+   
+
+
+
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+    // 给删除按钮绑定单击事件
+    $('.del').click(function(){
+        // 获取当前的id
+        var tid = $(this).attr('tid')
+        // 此处$this是获取对象,赋值给一个变量,来供ajax 的回调函数中使用
+        var td = $(this)
+        // 发送ajax 请求
+        $.get("{{ url_for('admin.tagdelete') }}",{'tid':tid},function(data){
+            if(data['error'] == 1){
+                //如果删除成功,则移除当前的整个tr 数据
+                td.parents('tr').remove()
+                // $(this).parents('tr').remove() # XX 
+                // $(this)  此处this 代表是ajax对象 XMLHttpRequest 对象
+            }
+            // 弹出提示信息
+            alert(data['msg']);
+        })
+    })
+
+
+    // 找到分类名的元素,绑定双击事件
+    $('.setname').dblclick(function(){
+        // 获取分类的id
+        var tid = $(this).attr('tid')
+        // 获取name名字
+        var name = $(this).text()
+        // 创建 input
+        var inp = $('<input value="'+name+'" style="color:black;width:20%;" type="text"/>')
+        // $(this)在下面发送ajax请求的时候,不能获取,不能使用,所以可以给它一个变量来获取,然后传到ajax里面使用
+        var td = $(this)
+        // 把创建好的input标签加入到td中
+        $(this).html(inp)
+        // 让input的内容选中
+        inp.select()
+        // 给input绑定失去焦点事件
+        inp.blur(function(){
+            // 获取当前修改好的新的name
+            var newname = $(this).val()
+            // 判断是否修改了分类名
+            if(newname == name){
+                // 不用发送ajax修改,直接恢复原样就可以
+                td.html(name)
+            }else{
+                // ,name 属性的值修改了就发送ajax请求,修改数据
+                $.get('{{ url_for("admin.tagupdate") }}',{'tid':tid,'name':newname},function(data){
+                    if(data['error'] == 1){
+                        // 修改成功  设置新的名字
+                        td.html(newname);
+                    }
+                    // 弹窗,弹出视图函数中传过来的data里面的msg 的值
+                    alert(data['msg']);
+                },'json')
+            }
+        })
+    })
+
+    // 给 next 绑定 单机事件 获取 下一页 的页数
+    $('ul .next').click(function(){
+        // 获取当前的页码数 
+        // currentpage = $(this).parents('li').find('a #page').val();
+        var num = {{ request.args.get('p',1) }};
+        $('.pagination ul li').eq(num+2).find('.current').append('<span></span>');
+        $('.pagination ul li').eq(num+2).find('.current span').click();
+    })
+    // 给 pre 绑定 单机事件 获取 上一页 的页数
+    $('ul .pre').click(function(){
+        // 获取当前的页码数 
+        // currentpage = $(this).parents('li').find('a #page').val();
+        var num = {{ request.args.get('p',1) }};
+        $('.pagination ul li').eq(num).find('.current').append('<span></span>');
+        $('.pagination ul li').eq(num).find('.current span').click();
+    })
+    // 首页
+    $('ul .first').click(function(){
+        // var num = 1;
+        // alert(num)
+        $('.pagination ul li').eq(2).find('.current').append('<span></span>');
+        $('.pagination ul li').eq(2).find('.current span').click();
+    })
+    // 尾页
+    $('ul .fina').click(function(){
+        var num = {{ b }};
+        // alert(num)
+        $('.pagination ul li').eq(num+1).find('.current').append('<span></span>');
+        $('.pagination ul li').eq(num+1).find('.current span').click();
+    })
+
+
+
+
+</script>
+{% endblock %}
+
+

@@ -1,0 +1,101 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+<link type="text/css" rel="stylesheet" href="css/jquery.pagination.css" /> 
+<script src="js/jquery.min.js"></script> 
+<script type="text/javascript" src="js/jquery.pagination.min.js"></script> 
+<style type="text/css"> 
+* { 
+    margin: 0; 
+    padding: 0; 
+} 
+ 
+body { 
+    font-family: 'Microsoft YaHei','Lantinghei SC','Open Sans',Arial,'Hiragino Sans GB','STHeiti','WenQuanYi Micro Hei','SimSun',sans-serif; 
+    background: #eee; 
+} 
+ 
+.box { 
+    width: 800px; 
+    margin: 100px auto 0; 
+    height: 34px; 
+} 
+ 
+.page { 
+    width: 600px; 
+} 
+ 
+.info { 
+    width: 200px; 
+    height: 34px; 
+    line-height: 34px; 
+} 
+ 
+.fl { 
+    float: left; 
+} 
+</style>
+</style>
+</head>
+<body>
+<div class="box"> 
+    <div id="pagination1" class="page fl"></div> 
+    <div class="info fl"> 
+        <p>当前页数：<span id="current1">1</span></p> 
+    </div> 
+</div> 
+<div class="box"> 
+    <div id="pagination2" class="page fl"></div> 
+    <div class="info fl"> 
+        <p>当前页数：<span id="current2">6</span></p> 
+    </div> 
+</div> 
+<div class="box"> 
+    <div id="pagination3" class="page fl"></div> 
+    <div class="info fl"> 
+        <p>当前页数：<span id="current3">8</span></p> 
+    </div> 
+</div>
+    
+<script type="text/javascript"> 
+$(function() { 
+    $("#pagination1").pagination({ 
+        currentPage: 1, 
+        totalPage: 12, 
+        callback: function(current) { 
+            $("#current1").text(current) 
+        } 
+    }); 
+ 
+    $("#pagination2").pagination({ 
+        currentPage: 6, 
+        totalPage: 12, 
+        isShow: false, 
+        count: 6, 
+        prevPageText: "< 上一页", 
+        nextPageText: "下一页 >", 
+        callback: function(current) { 
+            $("#current2").text(current) 
+        } 
+    }); 
+ 
+    $("#pagination3").pagination({ 
+        currentPage: 8, 
+        totalPage: 16, 
+        isShow: true, 
+        count: 7, 
+        homePageText: "首页", 
+        endPageText: "尾页", 
+        prevPageText: "上一页", 
+        nextPageText: "下一页", 
+        callback: function(current) { 
+            $("#current3").text(current) 
+        } 
+    }); 
+}); 
+</script>
+</body>
+</html>
+

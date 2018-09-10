@@ -1,0 +1,59 @@
+{% extends 'home/base.html' %}
+
+
+{% block conleft %}
+<div class="am-u-md-8 am-u-sm-12">
+    {% if ps.ps %}
+      {% for i in ps.ps %}
+          <article class="am-g blog-entry-article">
+              <div class="am-u-lg-6 am-u-md-12 am-u-sm-12 blog-entry-text">
+                  <span><a href="javascript:;" class="blog-color">作者 &nbsp;</a></span>
+                  <span><a href="{{ url_for('home.userblogs',id=i.id) }}" class="blog-color">@{{ i.user.name }} &nbsp;</a></span>
+                  <span>{{ i.addtime }}</span>
+                  <h1><a href="{{ url_for('home.bloginfo',post_id=i.id) }}">{{ i.title }}</a></h1>
+                  
+                  <div class="context">
+                     
+                  </div>
+                  <p><a href="">continue reading</a></p>
+              </div>
+          </article>
+      {% endfor %}
+        <ul class="am-pagination">
+          <li class="am-pagination-prev"><a href="">&laquo; Prev</a></li>
+          <li class="am-pagination-next"><a href="">Next &raquo;</a></li>
+        </ul>
+    {% else %}
+      <center style="margin-top:50px">
+        <h3>当前用户,还没有更多博文发布</h3>
+      </center>
+    {% endif %}
+</div>
+
+{% endblock %}
+
+{% block conright %}
+
+  <div class="am-u-md-4 am-u-sm-12 blog-sidebar">
+    <div class="blog-sidebar-widget blog-bor">
+        <h2 class="blog-text-center blog-title"><span>博 主</span></h2>
+        <img {% if ps.user.face %} src="{{ ps.user.face }}" {% else %}  src="/static/home/i/f161.jpg" {% endif %} alt="about me" class="blog-entry-img">
+        <p>{{ ps.user.name }}</p>
+        <p>
+            {{ ps.user.info|d('This guy was really lazy,nothing was left!',true) }}
+        </p>
+    </div>
+   
+      <div class="blog-clear-margin blog-sidebar-widget blog-bor am-g ">
+          <h2 class="blog-title">
+              <span>TAG cloud</span>
+          </h2>
+          <div class="am-u-sm-12 blog-clear-padding">
+              {% for v in 'a'|gettagsall %}
+                  <a href="{{ url_for('home.tagsblogs',tid=v.id)}}" class="blog-tag">{{ v }}</a>
+              {% endfor %}
+          </div>
+      </div>
+      
+  </div>
+{% endblock %}

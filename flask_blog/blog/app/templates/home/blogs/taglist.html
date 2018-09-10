@@ -1,0 +1,35 @@
+{% extends 'home/base.html' %}
+
+
+{% block conleft %}
+<div class="am-u-md-8 am-u-sm-12">
+
+  {% if ps%}
+      {% for i in ps %}
+        <article class="am-g blog-entry-article">
+            <div class="am-u-lg-6 am-u-md-12 am-u-sm-12 blog-entry-text">
+                <span><a href="javascript:;" class="blog-color">作者 &nbsp;</a></span>
+                <span><a href="{{ url_for('home.userblogs',id=i.id) }}" class="blog-color">@{{ i.user.name }} &nbsp;</a></span>
+                <span>{{ i.addtime }}</span>
+                <h1><a href="{{ url_for('home.bloginfo',post_id=i.id) }}">{{ i.title }}</a></h1>
+                
+                <div class="context">
+                   
+                </div>
+                <p><a href="" class="blog-continue">continue reading</a></p>
+            </div>
+        </article>
+      {% endfor %}
+        <ul class="am-pagination">
+          <li class="am-pagination-prev"><a href="">&laquo; Prev</a></li>
+          <li class="am-pagination-next"><a href="">Next &raquo;</a></li>
+        </ul>
+    {% else %}
+      <center>
+        <h3>当前标签下,还没有博文发布</h3>
+      </center>
+
+    {% endif %}
+</div>
+
+{% endblock %}

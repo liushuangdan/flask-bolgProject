@@ -1,0 +1,134 @@
+{% extends 'home/base.html' %}
+{% block head%}
+<li>
+    <a href="/">首页</a>
+</li>
+<li class="am-active"><a href="{{ url_for('home.member') }}">个人中心</a></li>
+<li><a href="{{ url_for('home.createblog') }}">博文发布</a></li>
+{% endblock %}
+
+
+{% block conleft %}
+
+<div class="am-u-md-12 am-u-sm-12 blog-sidebar">
+    <div class="blog-sidebar-widget">
+        <strong class="type-title glyphicon glyphicon-user">博主资料</strong> / <small>Personal&nbsp;information</small>
+    </div>
+    <hr/>
+
+    <!--头像 -->
+    <div class="blog-sidebar-widget">
+        <form class="am-form am-form-horizontal" action="{{ url_for('home.update') }}" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="uid" value="{{ ps.user.id }}">
+            <span for="exampleInputFile">博主头像:</span>
+            <div class="am-form-group">
+                <center>
+                    <div class="am-form-group am-form-file" style="width: 130px;"> 
+                        <div class="tpl-form-file-img"> 
+                            <img id="xmTanImg" width="130" {% if ps.user.face %} src="{{ ps.user.face }}" {% else %}  src="/static/home/i/f161.jpg" {% endif %} alt="博主头像" class="am-img-thumbnail am-circle" />
+                        </div> 
+                        <div id="xmTanDiv"></div>
+                        <label for='xdaTanFileImg' class="am-btn am-btn-danger am-btn-sm"><i class="am-icon-cloud-upload"></i>修改头像</label> 
+                        <input type="file" name="face" class="am-btn am-btn-default " style="display: none" id="xdaTanFileImg" onchange="xmTanUploadImg(this)" accept="image/*" width="200"  />
+                    </div>
+                    <div style="margin-top:4px;">
+                        <input type="button" value="隐藏图片" class="am-btn am-btn-primary am-btn-sm" onclick="document.getElementById('xmTanImg').style.display = 'none';"/>
+                        <input type="button" value="显示图片" class="am-btn am-btn-success am-btn-sm" onclick="document.getElementById('xmTanImg').style.display = 'block';"/>
+                        <input type="button" value="删除图片" class="am-btn am-btn-danger am-btn-sm" onclick="document.getElementById('xmTanImg').src= '';"/>
+                        <input type="button" value="默认图片" class="am-btn am-btn-secondary am-btn-sm" onclick="document.getElementById('xmTanImg').src= '/static/pics/user02.jpg';"/>
+                    </div>
+                </center>
+            </div>
+
+            <div class="am-form-group">
+                <label for="name" class="am-u-sm-2 am-form-label">昵称:</label>
+
+                <div class="am-u-sm-10">
+                    <input type="text" id="name" name="name" placeholder="如需修改用户名请填写" value="{{ ps.user.name }}">
+                </div>
+            </div>
+
+            <div class="am-form-group">
+                <label for="emailInputFile" class="am-u-sm-2 am-form-label">邮箱:</label>
+
+                <div class="am-u-sm-10">
+                    <input type="email" id="emailInputFile" name="email" placeholder="输入你的电子邮件地址" value="{{ ps.user.email }}">
+                </div>
+            </div>
+
+            <div class="am-form-group">
+                <label for="phone" class="am-u-sm-2 am-form-label">手机:</label>
+
+                <div class="am-u-sm-10">
+                    <input type="text" id="phone" name="phone" placeholder="请输入您11位的手机号码" value="{{ ps.user.phone }}">
+                </div>
+            </div>
+
+            <div class="am-form-group">
+                <label for="password" class="am-u-sm-2 am-form-label">密码:</label>
+
+                <div class="am-u-sm-10">
+                    <input type="password" id="password" name="pwd" placeholder="如需修改密码请填写">
+                </div>
+            </div>
+
+            <div class="am-form-group">
+                <label for="doc-ta-1">个性签名</label>
+                <textarea class="" rows="5" id="doc-ta-1" name="info" placeholder="{{ ps.user.info|d('This guy was really lazy,nothing was left!',true) }}"></textarea>
+            </div>
+
+            <div class="am-form-group">
+                <div class="am-u-sm-10 am-u-sm-offset-1">
+                    <button type="submit" class="am-btn am-btn-success">保存修改</button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+    <hr/>
+</div>
+<script type="text/javascript">
+          
+    //判断浏览器是否支持FileReader接口
+    if (typeof FileReader == 'undefined') {
+        document.getElementById("xmTanDiv").InnerHTML = "<h1>当前浏览器不支持FileReader接口</h1>";
+        //使选择控件不可操作
+        document.getElementById("xdaTanFileImg").setAttribute("disabled", "disabled");
+    }
+
+    //选择图片，马上预览
+    function xmTanUploadImg(obj) {
+        var file = obj.files[0];
+        
+        // console.log(obj);console.log(file);
+        // console.log("file.size = " + file.size);  //file.size 单位为byte
+
+        var reader = new FileReader();
+
+        //读取文件过程方法
+        reader.onloadstart = function (e) {
+            console.log("开始读取....");
+        }
+        reader.onprogress = function (e) {
+            console.log("正在读取中....");
+        }
+        reader.onabort = function (e) {
+            console.log("中断读取....");
+        }
+        reader.onerror = function (e) {
+            console.log("读取异常....");
+        }
+        reader.onload = function (e) {
+            console.log("成功读取....");
+
+            var img = document.getElementById("xmTanImg");
+            img.src = e.target.result;
+            //或者 img.src = this.result;  //e.target == this
+        }
+
+        reader.readAsDataURL(file)
+    }
+
+</script>
+
+{% endblock %}

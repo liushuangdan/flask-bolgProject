@@ -1,0 +1,101 @@
+{% extends 'home/base.html' %}
+
+{% block head%}
+<li>
+    <a href="/">首页</a>
+</li>
+<li ><a href="{{ url_for('home.member') }}">个人中心</a></li>
+<li class="am-active"><a href="{{ url_for('home.createblog') }}">博文发布</a></li>
+
+{% endblock %}
+
+{% block conleft %}
+<!-- content srart -->
+<div class="am-u-md-8 am-u-sm-12">
+    <form action="{{ url_for('home.createblog') }}" method="post" class="am-form am-g">
+        <h3 class="blog-comment">发布文章</h3>
+        <fieldset>
+            <div class="am-form-group am-u-sm-12 blog-clear-left">
+                <label>标题</label>
+                <input name="title" type="text" class="" placeholder="标题"></div>
+            <div class="am-form-group am-u-sm-12 blog-clear-left">
+                <p>
+                    <b>选择标签</b>
+                </p>
+                <div class="am-u-sm-6  am-fl">
+                    <label>可选标签</label>
+                    <select multiple="multiple" class="" id="one">
+                        {% for v in tags %}
+                        <option value="{{ v.id }}">{{ v.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="am-u-sm-6  am-fl">
+                    <label>已选标签</label>
+                    <select name="tags" multiple="multiple" class="" id="two"></select>
+                </div>
+            </div>
+            <div class="am-form-group am-u-sm-12 blog-clear-left">
+                <label>博文内容编辑</label>
+                <!-- 配置文件 -->
+                <script type="text/javascript" src="/static/ueditor/ueditor.config.js"></script>
+                <!-- 编辑器源码文件 -->
+                <script type="text/javascript" src="/static/ueditor/ueditor.all.js"></script>
+                <!-- 加载编辑器的容器 -->
+                <script id="aabbcc" name="content" type="text/plain">这里写你的初始化内容</script>
+                <!-- 实例化编辑器 -->
+                <script type="text/javascript">var ue = UE.getEditor('aabbcc', {
+                        serverUrl: '/ueditconfig/'
+                    });</script>
+            </div>
+            <p>
+                <button id="sub" type="submit" class="am-btn am-btn-primary am-topbar-right">文章发布</button></p>
+        </fieldset>
+    </form>
+</div>
+
+<script type="text/javascript">
+  $('#one option').dblclick(function(){
+       $('#two').append($(this))
+       $(this).attr('selected',false)
+  })
+  $('#two').on('dblclick','option',function(){
+       $('#one').append($(this))
+       $(this).attr('selected',false)
+  })
+ 
+
+  $('#sub').click(function(){
+       // $('#select2 option').attr('selected',true) //X
+       $('#two option').prop('selected',true) 
+  })
+</script>
+
+{% endblock %}
+
+{% block conright %}
+
+<div class="am-u-md-4 am-u-sm-12 blog-sidebar">
+    <div class="blog-clear-margin blog-sidebar-widget blog-bor am-g ">
+        <h2 class="blog-title">
+            <span>TAG cloud</span>
+        </h2>
+        <div class="am-u-sm-12 blog-clear-padding">
+            {% for v in tags %}
+            <a href="javascript:;" class="blog-tag">{{ v.name }}</a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+

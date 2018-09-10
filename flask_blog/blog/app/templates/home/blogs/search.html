@@ -1,0 +1,90 @@
+{% extends 'home/base.html' %}
+
+
+{% block con %}
+<div class="span9">
+    <h1>
+        博文列表
+    </h1>
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>博文编号</th>
+                <th>博文标题</th>
+                <th>博文标签</th>
+                <th>博文评论数 </th>
+                <th>发布时间</th>
+                <th>作者</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for v in ps.items %}
+            <tr>
+                <td>{{ v.id }}</td>
+                <td>{{ v.title }}</td>
+                <td>
+                    {% for i in v.tags %}
+                        {{ i.name }}
+                    {% endfor %}
+                </td>
+                <td>{{ v.comments|length }}</td>
+                <td>{{ v.addtime }}</td>
+                <td>{{ v.user.name }}</td>
+                <td>
+                    <a href="{{ url_for('home.bloginfo',post_id=v.id) }}" class="view-link">查看博文</a>
+                    <a href="" pid='{{ v.id }}' style="color:#333" class="del">删除</a>
+                </td>
+            </tr>
+            {% endfor %}
+            
+        </tbody>
+    </table> 
+    <div class="pagination">
+        <ul>
+            <li class="disabled">
+                <a href="#">«</a>
+            </li>
+           
+
+            {% for v in ps.iter_pages() %}
+
+            <li {% if v == request.args.get('p',1)|int %} class="active" {% endif %}>
+                <a href="{% if v %} ?p={{ v }} {% else %} javascript:void(0) {% endif %}"  >{{ v|d('...',true) }}</a>
+            </li>
+            {% endfor %}
+            
+            <li>
+                <a href="#">»</a>
+            </li>
+        </ul>
+    </div> 
+</div>
+
+<script type="text/javascript">
+    // 给删除按钮绑定单击事件
+    $('.del').click(function(){
+        // 获取当前的id
+        var pid = $(this).attr('pid')
+        // 此处$this是获取对象,赋值给一个变量,来供ajax 的回调函数中使用
+        var td = $(this)
+        // 发送ajax 请求
+        $.get("{{ url_for('admin.postdelete') }}",{'pid':pid},function(data){
+            if(data['error'] == 1){
+                //如果删除成功,则移除当前的整个tr 数据
+                td.parents('tr').remove()
+                // $(this).parents('tr').remove() # XX 
+                // $(this)  此处this 代表是ajax对象 XMLHttpRequest 对象
+            }
+            // 弹出提示信息
+            alert(data['msg'])
+        })
+    })
+
+
+</script>
+
+
+{% endblock %}
+
+
