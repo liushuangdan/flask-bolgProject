@@ -1,2 +1,2 @@
-# flask-
-flask 框架做的博客系统
+# flask
+flask 框架  博客系统
